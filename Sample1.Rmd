@@ -1,0 +1,213 @@
+---
+title: HTML形式のR Markdownサンプル
+subtitle: Pandoc`r rmarkdown::pandoc_version()`推奨
+author: 
+  - name: niszet
+    email: "niszet@niszet.com"
+  - name: "niszet2"
+    email: "nisnis@zetzet.com"
+date: "2019/4/13"
+kable-scroll: True
+abstract: TokyoR 77 で使用するR MarkdownのHTML出力形式のサンプルコードとファイル
+output:
+  html_document:
+    toc: TRUE
+    toc_depth: 2
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    number_sections: true
+    section_divs: True
+    fig_caption: True
+    df_print: paged
+    code_folding: hide
+    code_download: True
+    theme: united    
+    highlight: tango
+    md_extensions: +abbreviations+task_lists
+    pandoc_args: [
+      "--title-prefix", "Chapter",
+      "--id-prefix", "Bar",
+      "--metadata", "pagetitle=hoge" ]
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+# HTML Sample of R Markdown
+
+*[HTML]: Hypertext Markup Language
+
+`output:html_document`を指定したときの出力結果を確認する。
+
+## まずは作ってみよう
+
+### 新規ファイルの作成
+R Studioのメニュー、`[File]` - `[New File]` - `[R Markdown]` を選択してDocumentのHTMLを選択。
+titleに「はじめてのR Markdown」、Authorに名前を入れてみる。
+
+
+
+
+### Knit
+Source Pane上部にあるKnitのボタンを押す
+
+
+
+
+## R Markdownファイルの構成
+
+* 拡張子をRmdとして保存。
+
+* YAMLというデータの書き方を使ってパラメータやR Markdownの挙動を制御する
+* 本文はMarkdownの文法を使って書く
+* Rのコードはチャンクと呼ばれる
+
+
+## YAML
+
+このHTMLファイルのYAMLは以下のとおり。
+
+
+```yaml
+title: HTML形式のR Markdownサンプル
+subtitle: Pandoc`r rmarkdown::pandoc_version()`推奨
+author: 
+  - name: "niszet"
+    email: "niszet@niszet.com"
+  - name: "niszet2"
+    email: "nisnis@zetzet.com"
+date: "2019/4/13"
+kable-scroll: True
+abstract: TokyoR 77 で使用するR MarkdownのHTML出力形式のサンプルコードとファイル
+output:
+  html_document:
+    toc: TRUE
+    toc_depth: 2
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    number_sections: true
+    section_divs: True
+    fig_caption: True
+    df_print: paged
+    code_folding: hide
+    code_download: True
+    theme: united    
+    highlight: tango
+    md_extensions: +abbreviations+task_lists
+    pandoc_args: [
+      "--title-prefix", "Chapter",
+      "--id-prefix", "Bar",
+      "--metadata", "pagetitle=hoge" ]
+```
+
+
+
+## いくつかのMarkdown記述例
+### 基本
+
+*斜体*  **強調** _**強調斜体**_ 
+
+行末での改行は
+通常は無視される。行末に半角スペース2つ  
+あるいはバックスラッシュ`\`を入れると\
+その場所で改行される。
+
+
+### 脚注
+脚注はページ下部に [^footnote] インライン脚注は便利 ^[しかし、地の文と区別がつきにくいので多用は厳禁]
+
+[^footnote]: このように表示される。
+
+### リスト
+* リスト1
+* リスト2
+  * リスト2-1
+  * リスト2-2
+
+1. リスト10
+1. リスト11
+   1. リスト11-1
+   1. リスト11-2
+
+### ブロック引用
+
+> ブロック引用。
+>
+> > 複数の引用の`>`の間にスペースがあればネストした引用の表示になる
+
+
+### Task List
+`md_extensions:` に `+task_lists`を追加すると、チェックリストが作れる。
+
+- [ ] チェックが入っていない場合
+- [x] チェックが入っている場合
+
+
+## 数式
+$\LaTeX$ の数式の書き方が使える。
+
+$$ I_{ds} = \frac{1}{2}\mu C_{ox} \frac{W}{L} \left( V_{gs} - V_{th} \right)^2 $$
+
+
+## 表
+
+### pagedを指定した表の表示例
+
+YAML中で`df_print:paged`を指定しているので、列が多いdata.frameは複数ページに表示されるようになる。
+
+```{r}
+mtcars
+```
+
+### `knitr::kable()`を使った例
+`knitr::kable()`を使って表示するとこのようになる。
+
+```{r}
+knitr::kable(head(iris))
+```
+
+kableExtra パッケージなどもおススメ https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html
+
+
+
+## tabset を使う例 {.tabset .tabset-fade .tabset-pills}
+HTML形式の出力の場合、`tabset`関連の設定でこのように表示できる
+
+
+### Sepal.Length
+
+```{r}
+iris %>% ggplot()+geom_violin(aes(x=Species, y=Sepal.Length))+theme_bw()
+```
+
+
+### Sepal.Width
+
+```{r}
+iris %>% ggplot()+geom_violin(aes(x=Species, y=Sepal.Width))+theme_bw()
+```
+
+### Petal.Length
+
+```{r}
+iris %>% ggplot()+geom_violin(aes(x=Species, y=Petal.Length))+theme_bw()
+```
+
+
+### Petal.Width
+
+```{r}
+iris %>% ggplot()+geom_violin(aes(x=Species, y=Petal.Width))+theme_bw()
+```
+
+
+## plotlyパッケージを使用する
+
+```{r}
+g <- iris %>% ggplot()+geom_point(aes(x=Sepal.Width, y=Petal.Width, color=Species))+theme_bw()
+g %>% plotly::ggplotly()
+```
